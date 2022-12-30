@@ -45,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/user/login",
                         "/api/prod/list",
                         "/api/categroy/getalllist",
-                        "/api/user/account/acwing/web/receive_code/"
+                        "/api/news/getlist"
                 ).permitAll()
                 .antMatchers("/pk/start/game/", "/pk/receive/bot/move/").hasIpAddress("127.0.0.1")
                 .antMatchers(HttpMethod.OPTIONS).permitAll()

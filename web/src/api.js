@@ -46,6 +46,42 @@ export default {
       params
     }, token)
   },
+  getcart(params, token) {
+    return ajax('user/getcart', 'get', {
+      params
+    }, token)
+  },
+  addcart(params, token) {
+    return ajax('user/addcart', 'get', {
+      params
+    }, token)
+  },
+  getaddress(params, token) {
+    return ajax('user/getaddress', 'get', {
+      params
+    }, token)
+  },
+  deladdress(params, token) {
+    return ajax('user/deladdress', 'get', {
+      params
+    }, token)
+  },
+  addaddress(data, token) {
+    return ajax('user/addaddress', 'post', {
+      data
+    }, token)
+  },
+  modifyaddress(data, token) {
+    return ajax('user/modifyaddress', 'post', {
+      data
+    }, token)
+  },
+  getnews(params, token) {
+    return ajax('news/getlist', 'get', {
+      params
+    }, token)
+  },
+
 
 
   getuserlist(params, token) { //后台

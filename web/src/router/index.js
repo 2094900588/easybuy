@@ -13,8 +13,8 @@ import OrderListView from '@/views/manage/order/OrderListView'
 import ProdAddView from '@/views/manage/prod/ProdAddView'
 import ProdListView from '@/views/manage/prod/ProdListView'
 import MyOrderView from '@/views/user/MyOrderView'
-
-
+import MyShopCartView from '@/views/user/MyShopCartView'
+import NewsView from '@/views/NewsView'
 
 const routes = [
   {
@@ -29,6 +29,16 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: MyOrderView//() => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+  },
+  {
+    path: '/mycart',
+    name: 'mycart',
+    component: MyShopCartView
+  },
+  {
+    path: '/news',
+    name: 'news',
+    component: NewsView
   },
   {
     path: '/manage',

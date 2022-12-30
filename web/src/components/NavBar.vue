@@ -14,7 +14,7 @@
                             :to="{ name: 'home' }">Home</router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link class="nav-link" :to="{ name: 'home' }">购物车</router-link>
+                        <router-link class="nav-link" :to="{ name: 'news' }">新闻</router-link>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -42,17 +42,19 @@
                     <div v-if="$store.state.user.is_login">
                         <div style="float: left;margin-top: 10px;margin-right: 30px;">
                             <button type="button" class="btn btn-light position-relative"
-                                style="width: 40px;padding-left: 10px;height: 40px;">
+                                style="width: 40px;padding-left: 10px;height: 40px;"
+                                @click='router.push({ name: "mycart" })'>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
                                     class="bi bi-cart3" viewBox="0 0 30 30">
                                     <path
                                         d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
                                 </svg>
-                                <span
+                                <span v-if="$store.state.cartnum > 0"
                                     class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                    1
+                                    {{ $store.state.cartnum }}
                                     <!-- <span class="visually-hidden">unread messages</span> -->
                                 </span>
+
                             </button>
 
                         </div>
@@ -100,9 +102,11 @@
 <script>
 // import { useRoute } from 'vue-router'
 // import { computed } from 'vue';
+import api from '@/api';
 import { useStore } from 'vuex';
 import LoginModal from '../views/user/LoginModal.vue';
 import RegisterModel from '../views/user/RegisterModel.vue';
+import router from '@/router/index'
 
 export default {
     components: { LoginModal, RegisterModel },
@@ -113,9 +117,22 @@ export default {
         const logout = () => {
             store.dispatch("logout");
         }
+
+        const getcart = () => {
+            if (store.state.user.is_login) {
+                api.getcart({}, store.state.user.token).then(res => {
+                    let resp = res.data;
+                    if (resp.result === "success") {
+                        store.commit("updateCartNum", resp.cart.length);
+                    }
+                })
+            }
+        }
+        setTimeout(getcart, 200);
         return {
             // route_name,
-            logout
+            logout,
+            router
         };
     }
 }
