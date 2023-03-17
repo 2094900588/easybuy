@@ -14,18 +14,24 @@
             </thead>
             <tbody>
                 <tr v-for="(item, index) in carts" :key="index">
-                    <th><input class="form-check-input" type="checkbox" v-model="item.ischecked"></th>
+                    <th><input class="form-check-input" type="checkbox" v-model="item.ischecked" @change="updatetotal">
+                    </th>
                     <th scope="row">{{ index + 1 }}</th>
                     <td>{{ item.name }}</td>
                     <td>
                         <button type="button" class="btn btn-secondary"
                             @click="addnum(item.productId, item.quantity + 1)">+</button>
-                        <input v-model="item.quantity" type="text" style="width: 40px;">
+                        <input v-model="item.quantity" type="text" style="width: 40px;"
+                            @change="addnum(item.productId, item.quantity)">
                         <button type="button" class="btn btn-secondary"
                             @click="addnum(item.productId, item.quantity - 1)">-</button>
                     </td>
                     <td>{{ item.price }}</td>
                     <td>{{ item.quantity * item.price }}</td>
+                </tr>
+                <tr>
+                    <th colspan="5">合计</th>
+                    <th>{{ total }}</th>
                 </tr>
             </tbody>
         </table><br />
@@ -47,6 +53,7 @@
 import api from '@/api'
 import { ref } from 'vue';
 import { useStore } from 'vuex';
+import { computed } from 'vue';
 
 export default {
     setup() {
@@ -54,10 +61,18 @@ export default {
         let carts = ref([])
         let address = ref([])
         let addressid = ref(0);
+        // let total = ref(0)
         const pull_page = () => {
             api.getcart({}, store.state.user.token).then(res => {
                 let resp = res.data;
                 if (resp.result === "success") {
+                    if (carts.value.length > 0)
+                        for (let i of resp.cart)
+                            for (let j of carts.value)
+                                if (i.productId == j.productId) {
+                                    i.ischecked = j.ischecked;
+                                    break;
+                                }
                     carts.value = resp.cart
                 }
             })
@@ -100,7 +115,6 @@ export default {
                     address.value = resp.address
                     addressid.value = address.value[0].id
                 }
-                console.log(resp);
             })
         }
 
@@ -112,9 +126,42 @@ export default {
             }
             carts.value = cart
         }
+        let total = computed(() => {
+            let s = 0
+            for (let i of carts.value) {
+                if (i.ischecked) {
+                    s += i.quantity * i.price
+                }
+            }
+            return s
+        });
 
         const buy = () => {
-            console.log(carts.value);
+            let cart = []
+            let total = 0
+            for (let i of carts.value) {
+                if (i.ischecked) {
+                    cart.push({
+                        productId: i.productId,
+                        quantity: i.quantity
+                    })
+                    total += i.quantity * i.price
+                }
+            }
+            if (total == 0) {
+                alert("你还未选择任何商品")
+                return
+            }
+            let data = {
+                cart,
+                addressid: addressid.value
+            }
+            api.buy(data, store.state.user.token).then(res => {
+                let resp = res.data;
+                if (resp.result === "success") {
+                    alert("下单成功")
+                }
+            })
         }
 
         pull_page()
@@ -126,7 +173,8 @@ export default {
             buy,
             address,
             addressid,
-            selectall
+            selectall,
+            total
         }
     }
 }

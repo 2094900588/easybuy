@@ -21,7 +21,7 @@
                     <th>
                         <button type="button" class="btn btn-primary" @click="getorderdetail(item)"
                             data-bs-toggle="modal" :data-bs-target="'#showdetail' + item.id">查看详情</button>
-                        <button type="button" class="btn btn-danger">删除</button>
+                        <!-- <button type="button" class="btn btn-danger">删除</button> -->
                     </th>
 
                     <!-- Modal 删除 -->

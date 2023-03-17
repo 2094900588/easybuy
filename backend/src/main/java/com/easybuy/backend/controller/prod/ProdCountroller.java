@@ -20,12 +20,18 @@ public class ProdCountroller {
 
     @GetMapping("/list")
     public JSONObject getlist(@RequestParam Map<String, String> data) {
-        int page = 1;
-        int pagesize = 10;
-        if(data.get("page") !=null)
-            page = Integer.parseInt(data.get("page"));
-        if(data.get("pagesize")!=null)
-            pagesize = Integer.parseInt(data.get("pagesize"));
-        return prodService.getlist(page,pagesize);
+        String keyword = null;
+        Integer level1 = null;
+        Integer level2 = null;
+        Integer level3 = null;
+        if(data.get("keyword")!=null)
+            keyword = data.get("keyword");
+        if(data.get("level1")!=null)
+            level1 = Integer.parseInt(data.get("level1"));
+        if(data.get("level2")!=null)
+            level2 = Integer.parseInt(data.get("level2"));
+        if(data.get("level3")!=null)
+            level3 = Integer.parseInt(data.get("level3"));
+        return prodService.getlist(keyword,level1,level2,level3);
     }
 }

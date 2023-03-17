@@ -3,7 +3,8 @@ import ModuleUser from './user'
 
 export default createStore({
   state: {
-    cartnum: 0
+    cartnum: 0,
+    prods: []
   },
   getters: {
   },
@@ -11,6 +12,9 @@ export default createStore({
     updateCartNum(state, cartnum) {
       state.cartnum = cartnum;
     },
+    updateProds(state, prods) {
+      state.prods = prods
+    }
   },
   actions: {
   },

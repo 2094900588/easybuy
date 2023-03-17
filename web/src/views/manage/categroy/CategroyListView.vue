@@ -1,7 +1,8 @@
 <template>
     <div>
         <div>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="">添加分类</button>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addcategroy"
+                @click="changecate(addcategroy)">添加分类</button>
             <select class="form-select" v-model="page_size" aria-label="Default select example"
                 style="width: 100px;float: right;" @change="pull_page(current_page)">
                 <option value=5>5</option>
@@ -97,7 +98,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-primary"
-                                        @click="savecategroy(user)">保存</button>
+                                        @click="savecategroy(item)">保存</button>
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                                 </div>
                             </div>
@@ -128,12 +129,59 @@
             </ul>
         </nav>
     </div>
+
+    <!-- Modal 添加 -->
+    <div class="modal fade" id="addcategroy" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">添加分类</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <span class="input-group-text">分类</span>
+                        <input v-model="addcategroy.name" type="text" class="form-control" placeholder="请输入分类名">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text">父级分类</span>
+                        <select class="form-select" v-model="addcategroy.parentid" aria-label="Default select example">
+                            <option value=0>无</option>
+                            <option v-for="option in addcategroy.cates" :key="option.id" :value="option.id">
+                                {{ option.name }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-group-text">分类级别</span>
+                        <select class="form-select" v-model="addcategroy.type" aria-label="Default select example"
+                            @change="changecate(addcategroy)">
+                            <option value=1>一级分类</option>
+                            <option value=2>二级分类</option>
+                            <option value=3>三级分类</option>
+                        </select>
+                    </div>
+
+
+                    <div class="error-message">{{ addcategroy.error_message }}</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @click="categroyadd(addcategroy)">添加</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </template>
 
 <script>
 import api from '@/api'
 import { ref } from 'vue';
 import { useStore } from 'vuex';
+import { Modal } from 'bootstrap/dist/js/bootstrap'
+
 export default {
     setup() {
         let store = useStore();
@@ -142,11 +190,13 @@ export default {
         let total = 0;
         let page_size = ref(10);
         let pages = ref([]);
+        let addcategroy = ref([]);
         let cates = [];
 
         const click_page = page => {
             if (page === -2) page = current_page - 1;
             else if (page === -1) page = current_page + 1;
+            else if (page === 0) page = current_page
             let max_pages = parseInt(Math.ceil(total / page_size.value));
             if (page >= 1 && page <= max_pages)
                 pull_page(page);
@@ -190,7 +240,7 @@ export default {
         const id_to_name = id => {
             for (let i of cates)
                 if (i.id === id) return i.name
-            return id
+            return ""
         }
 
         const changecate = item => {
@@ -202,6 +252,48 @@ export default {
             }
         }
 
+        const delcategroy = categroyid => {
+            api.deletecategroy({ id: categroyid }, store.state.user.token).then(res => {
+                let resp = res.data;
+                if (resp.result === "success") {
+                    click_page(0);
+                    Modal.getInstance("#deletecategroy" + categroyid).hide()
+                }
+            })
+        }
+
+        const savecategroy = item => {
+            let data = {
+                id: item.id,
+                name: item.name,
+                parentId: item.parentid,
+                type: item.type
+            }
+            api.modifycategroy(data, store.state.user.token).then(res => {
+                let resp = res.data;
+                if (resp.result === "success") {
+                    click_page(0);
+                    Modal.getInstance("#modifycategroy" + item.id).hide()
+                }
+            })
+        }
+
+        const categroyadd = item => {
+            let data = {
+                name: item.name,
+                parentId: item.parentid,
+                type: item.type
+            }
+            api.addcategroy(data, store.state.user.token).then(res => {
+                let resp = res.data;
+                console.log(resp);
+                if (resp.result === "success") {
+                    click_page(0);
+                    Modal.getInstance("#addcategroy").hide()
+                    addcategroy.value = {}
+                }
+            })
+        }
 
         pull_page(current_page);
 
@@ -210,11 +302,15 @@ export default {
             pages,
             page_size,
             current_page,
+            addcategroy,
             click_page,
             id_to_name,
             pull_page,
             cates,
-            changecate
+            changecate,
+            delcategroy,
+            savecategroy,
+            categroyadd
         }
     }
 }

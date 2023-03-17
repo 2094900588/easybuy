@@ -15,6 +15,8 @@ import ProdListView from '@/views/manage/prod/ProdListView'
 import MyOrderView from '@/views/user/MyOrderView'
 import MyShopCartView from '@/views/user/MyShopCartView'
 import NewsView from '@/views/NewsView'
+import MyAddressView from '@/views/user/MyAddressView'
+
 
 const routes = [
   {
@@ -34,6 +36,11 @@ const routes = [
     path: '/mycart',
     name: 'mycart',
     component: MyShopCartView
+  },
+  {
+    path: '/myaddress',
+    name: 'myaddress',
+    component: MyAddressView
   },
   {
     path: '/news',

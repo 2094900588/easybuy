@@ -16,7 +16,7 @@
                     <li class="nav-item">
                         <router-link class="nav-link" :to="{ name: 'news' }">新闻</router-link>
                     </li>
-                    <li class="nav-item dropdown">
+                    <!-- <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             Dropdown
@@ -29,14 +29,15 @@
                             </li>
                             <li><a class="dropdown-item" href="#">Something else here</a></li>
                         </ul>
-                    </li>
+                    </li> -->
                     <!-- <li class="nav-item">
                         <a class="nav-link disabled">Disabled</a>
                     </li> -->
-                    <form class="d-flex">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-success" type="submit">Search</button>
-                    </form>
+
+                    <input class="form-control me-2" type="search" placeholder="请输入查找的内容" aria-label="Search"
+                        style="width: 180px;" v-model="keyword" @keydown="enter">
+                    <button class="btn btn-outline-success" type="button" @click="getprod(keyword)">搜索</button>
+
                 </ul>
                 <div>
                     <div v-if="$store.state.user.is_login">
@@ -70,6 +71,10 @@
                                     <li>
                                         <router-link class="dropdown-item" :to="{ name: 'myorder' }">我的订单</router-link>
                                     </li>
+                                    <li>
+                                        <router-link class="dropdown-item"
+                                            :to="{ name: 'myaddress' }">我的地址</router-link>
+                                    </li>
                                     <li v-if="$store.state.user.usertype === 1">
                                         <router-link class="dropdown-item"
                                             :to="{ name: 'managehome' }">后台管理</router-link>
@@ -102,16 +107,18 @@
 <script>
 // import { useRoute } from 'vue-router'
 // import { computed } from 'vue';
+import router from '@/router/index'
 import api from '@/api';
 import { useStore } from 'vuex';
 import LoginModal from '../views/user/LoginModal.vue';
 import RegisterModel from '../views/user/RegisterModel.vue';
-import router from '@/router/index'
+import { ref } from 'vue';
 
 export default {
     components: { LoginModal, RegisterModel },
     setup() {
         const store = useStore();
+        let keyword = ref("");
         // const route = useRoute();
         // let route_name = computed(() => route.name);
         const logout = () => {
@@ -128,11 +135,36 @@ export default {
                 })
             }
         }
+
+
+        const getprod = (keyword, level1, level2, level3) => {
+            let params = {
+                keyword,
+                level1,
+                level2,
+                level3
+            }
+            api.getprodlists(params).then(res => {
+                let resp = res.data;
+                store.commit("updateProds", resp.prod);
+                // router.push({ name: "home" })
+            })
+        }
+
+        const enter = e => {
+            if (e.key == "Enter")
+                getprod(keyword.value);
+        }
+
+        getprod();
         setTimeout(getcart, 200);
         return {
             // route_name,
             logout,
-            router
+            router,
+            getprod,
+            keyword,
+            enter
         };
     }
 }

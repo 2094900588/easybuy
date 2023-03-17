@@ -1,14 +1,14 @@
 package com.easybuy.backend.controller.user;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.easybuy.backend.service.shopcart.AddShopCartService;
+import com.easybuy.backend.service.shopcart.BuyService;
 import com.easybuy.backend.service.shopcart.ShowShopCartService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -18,6 +18,8 @@ public class UserShopCartController {
     private ShowShopCartService showShopCartService;
     @Autowired
     private AddShopCartService addShopCartService;
+    @Autowired
+    private BuyService buyService;
 
     @GetMapping("/getcart")
     public JSONObject getcart(){
@@ -31,4 +33,8 @@ public class UserShopCartController {
         return addShopCartService.add(productId,quantity);
     }
 
+    @PostMapping("/buy")
+    public JSONObject buy(@RequestBody JSONObject map){
+        return buyService.buy(map);
+    }
 }

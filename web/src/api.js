@@ -1,13 +1,6 @@
-// import Vue from 'vue'
-// import router from './router'
 import axios from 'axios'
 
-
-// Vue.prototype.$http = axios
-// axios.defaults.baseURL = process.env.NODE_ENV == 'development' ? 'http://127.0.0.1:3000/api' : 'https://app2948.acapp.acwing.com.cn/api'
-axios.defaults.baseURL = "http://" + location.hostname + ":8002/api"
-// axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-// axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.baseURL = process.env.NODE_ENV == 'development' ? "http://" + location.hostname + ":8002/api" : '/api'
 
 
 export default {
@@ -81,6 +74,11 @@ export default {
       params
     }, token)
   },
+  buy(data, token) {
+    return ajax('user/buy', 'post', {
+      data
+    }, token)
+  },
 
 
 
@@ -122,6 +120,36 @@ export default {
   adduser(data, token) {
     return ajax('manage/user/add', 'post', {
       data
+    }, token)
+  },
+  addcategroy(data, token) {
+    return ajax('manage/categroy/add', 'post', {
+      data
+    }, token)
+  },
+  modifycategroy(data, token) {
+    return ajax('manage/categroy/modify', 'post', {
+      data
+    }, token)
+  },
+  deletecategroy(params, token) {
+    return ajax('manage/categroy/delete', 'get', {
+      params
+    }, token)
+  },
+  addprod(data, token) {
+    return ajax('manage/prod/add', 'post', {
+      data
+    }, token)
+  },
+  modifyprod(data, token) {
+    return ajax('manage/prod/modify', 'post', {
+      data
+    }, token)
+  },
+  deleteprod(params, token) {
+    return ajax('manage/prod/delete', 'get', {
+      params
     }, token)
   },
 

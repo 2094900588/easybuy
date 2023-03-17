@@ -26,8 +26,9 @@
     </div>
 
 
-    <div class="card item" style="width: 16rem;" v-for="item in prods" :key="item.id">
-      <img src="" class="card-img-top" alt="...">
+    <div class="card item" style="width: 16rem;" v-for="item in $store.state.prods" :key="item.id">
+      <img src="https://cbu01.alicdn.com/img/ibank/O1CN01R9TAAB1qJbFDnnExs_!!2208466515475-0-cib.220x220.jpg?_=2020"
+        class="card-img-top" alt="...">
       <div class="card-body">
         <h5 class="card-title">{{ item.name }}</h5>
         <p class="card-text">{{ item.price }}元</p>
@@ -54,18 +55,8 @@ export default {
   setup() {
     let store = useStore();
     let prods = ref([]);
-    let current_page = 1;
-    let page_size = 20;
     let alerts = ref(false);
     let alert_message = ref("");
-    let params = {
-      page: current_page,
-      pagesize: page_size
-    }
-    api.getprodlists(params).then(res => {
-      let resp = res.data;
-      prods.value = resp.prod;
-    })
 
     const addcart = (item, quantity) => {
       let params = {
@@ -85,6 +76,7 @@ export default {
 
     const getcart = () => {
       if (store.state.user.is_login) {
+
         api.getcart({}, store.state.user.token).then(res => {
           let resp = res.data;
           if (resp.result === "success") {
