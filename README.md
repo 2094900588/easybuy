@@ -1,6 +1,6 @@
-### 这是学校的期末作业，实现了一个简易的商城系统  
+### 本项目实现了一个简易的商城系统  
 ***
-这是一个基于springboot+vue3的一个简易的商城系统，老师教的是用SSM写的，我认为SSM过于繁杂，于是使用springboot+mybaits plus开发
+这是一个基于springboot+vue3的一个简易的商城系统，使用springboot+mybaits plus开发
 
 ***
 + 实现了首页商品显示、搜索
